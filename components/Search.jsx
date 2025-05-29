@@ -1,28 +1,47 @@
-import React from 'react'
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  Button,
-  FlatList,
-  Text,
-} from 'react-native'
-import films from '../Helpers/filmsData.js'
+import React, { useState } from 'react'
+import { StyleSheet, View, TextInput, Button, FlatList } from 'react-native'
+// import films from '../Helpers/filmsData.js'
+import FilmsItems from './FilmsItems.jsx'
+import { getfilmbytext } from '../Helpers/MVapi.js'
+import Spinner from './Spinner.jsx'
+
 const Search = () => {
+  const [search, setSearch] = useState()
+  const [films, setFilms] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const searchHundler = (text) => {
+    setSearch(text)
+  }
+
+  const sreachCklick = () => {
+    if (search) {
+      getfilmbytext(search)
+        .then((data) => {
+          // console.log(data.results)
+          setFilms(data.results)
+          setLoading(false)
+        })
+        .catch((error) => console.error(error))
+    }
+  }
+
   return (
     <View style={styles.main_container}>
-      <TextInput style={styles.textinput} placeholder="Titre du film" />
-      <Button
-        title="Search Movie"
-        onPress={() => {
-          console.log('search')
-        }}
+      <TextInput
+        style={styles.textinput}
+        placeholder="Titre du film"
+        onChangeText={searchHundler}
+        value={search}
+        name="search"
       />
+      <Button title="Search Movie" onPress={sreachCklick} />
       <FlatList
         data={films}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <Text>{item.title}</Text>}
+        renderItem={({ item }) => <FilmsItems film={item} />}
       />
+      {loading && <Spinner />}
     </View>
   )
 }
