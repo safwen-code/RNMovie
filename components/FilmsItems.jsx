@@ -4,7 +4,10 @@ import { View, Image, Text, StyleSheet } from 'react-native'
 const FilmsItems = ({ film }) => {
   return (
     <View style={styles.main_container}>
-      <Image style={styles.image} source={{ uri: film.poster_path }} />
+      <Image
+        style={styles.image}
+        source={{ uri: `https://image.tmdb.org/t/p/w500${film.poster_path}` }}
+      />
       <View style={styles.content_container}>
         <View style={styles.header_container}>
           <Text style={styles.title_text}>{film.title}</Text>
