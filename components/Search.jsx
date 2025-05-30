@@ -9,23 +9,38 @@ const Search = () => {
   const [search, setSearch] = useState()
   const [films, setFilms] = useState([])
   const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
 
   const searchHundler = (text) => {
     setSearch(text)
   }
 
+  const loadFilms = () => {
+    getfilmbytext(search, page + 1)
+      .then((data) => {
+        // console.log(data.results)
+        setPage(data.page)
+        setTotalPages(data.total_pages)
+        setFilms(data.results)
+        setLoading(false)
+      })
+      .catch((error) => console.error(error))
+  }
   const sreachCklick = () => {
     if (search) {
-      getfilmbytext(search)
-        .then((data) => {
-          // console.log(data.results)
-          setFilms(data.results)
-          setLoading(false)
-        })
-        .catch((error) => console.error(error))
+      setLoading(true)
+      loadFilms()
     }
   }
 
+  const submitInput = () => {
+    setPage(0)
+    setTotalPages(0)
+    setFilms({ films: [] }, () => {
+      loadFilms()
+    })
+  }
   return (
     <View style={styles.main_container}>
       <TextInput
@@ -34,12 +49,19 @@ const Search = () => {
         onChangeText={searchHundler}
         value={search}
         name="search"
+        onSubmitEditing={submitInput}
       />
       <Button title="Search Movie" onPress={sreachCklick} />
       <FlatList
         data={films}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <FilmsItems film={item} />}
+        onEndReachedThreshold={0.5}
+        onEndReached={() => {
+          if (page < totalPages) {
+            loadFilms()
+          }
+        }}
       />
       {loading && <Spinner />}
     </View>
