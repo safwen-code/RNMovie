@@ -4,6 +4,7 @@ import { StyleSheet, View, TextInput, Button, FlatList } from 'react-native'
 import FilmsItems from './FilmsItems.jsx'
 import { getfilmbytext } from '../Helpers/MVapi.js'
 import Spinner from './Spinner.jsx'
+import { useNavigation } from '@react-navigation/native'
 
 const Search = () => {
   const [search, setSearch] = useState()
@@ -12,10 +13,12 @@ const Search = () => {
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
 
+  //get text == search
   const searchHundler = (text) => {
     setSearch(text)
   }
 
+  //hundel films from dbMovie
   const loadFilms = () => {
     getfilmbytext(search, page + 1)
       .then((data) => {
@@ -27,19 +30,28 @@ const Search = () => {
       })
       .catch((error) => console.error(error))
   }
+
+  //search for data
   const sreachCklick = () => {
     if (search) {
       setLoading(true)
       loadFilms()
     }
   }
-
+  //submit by input
   const submitInput = () => {
     setPage(0)
     setTotalPages(0)
     setFilms({ films: [] }, () => {
       loadFilms()
     })
+  }
+
+  const navigation = useNavigation()
+  //get id of film
+  const getFilmId = (id) => {
+    // console.log('search comp id film', id)
+    navigation.navigate('Detailfilm', { idfilm: id })
   }
   return (
     <View style={styles.main_container}>
@@ -55,7 +67,9 @@ const Search = () => {
       <FlatList
         data={films}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <FilmsItems film={item} />}
+        renderItem={({ item }) => (
+          <FilmsItems film={item} getFilmId={getFilmId} />
+        )}
         onEndReachedThreshold={0.5}
         onEndReached={() => {
           if (page < totalPages) {
@@ -73,7 +87,6 @@ export default Search
 const styles = StyleSheet.create({
   main_container: {
     flex: 1,
-    marginTop: 20,
   },
   textinput: {
     marginLeft: 5,
