@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import { StyleSheet, View, TextInput, Button, FlatList } from 'react-native'
-// import films from '../Helpers/filmsData.js'
-import FilmsItems from './FilmsItems.jsx'
+
 import { getfilmbytext } from '../Helpers/MVapi.js'
 import Spinner from './Spinner.jsx'
-import { useNavigation } from '@react-navigation/native'
-import { useSelector } from 'react-redux'
+import FilmList from './FilmList.jsx'
 
 const Search = () => {
   const [search, setSearch] = useState()
@@ -48,16 +46,6 @@ const Search = () => {
     })
   }
 
-  const navigation = useNavigation()
-  //get id of film
-  const getFilmId = (id) => {
-    // console.log('search comp id film', id)
-    navigation.navigate('FilmDetails', { idfilm: id })
-  }
-
-  const favorite = useSelector((state) => state.favorite)
-  const { favoritesFilm } = favorite
-
   return (
     <View style={styles.main_container}>
       <TextInput
@@ -69,26 +57,12 @@ const Search = () => {
         onSubmitEditing={submitInput}
       />
       <Button title="Search Movie" onPress={sreachCklick} />
-      <FlatList
-        data={films}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <FilmsItems
-            film={item}
-            getFilmId={getFilmId}
-            isFilmFavorite={
-              favoritesFilm.findIndex((film) => film.id === item.id) !== -1
-                ? true
-                : false
-            }
-          />
-        )}
-        onEndReachedThreshold={0.5}
-        onEndReached={() => {
-          if (page < totalPages) {
-            loadFilms()
-          }
-        }}
+      <FilmList
+        films={films}
+        page={page}
+        totalPages={totalPages}
+        favoriteList={false}
+        loadFilms={loadFilms}
       />
       {loading && <Spinner />}
     </View>
