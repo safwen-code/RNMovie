@@ -18,12 +18,24 @@ function SearchStack() {
       <Stack.Screen
         name="Search"
         component={Search}
-        options={{ headerShown: false }}
+        options={{
+          title: 'Search',
+          headerShown: true,
+          headerTitleAlign: 'center',
+          headerStyle: { backgroundColor: '#f4511e' },
+          headerTintColor: '#fff',
+        }}
       />
       <Stack.Screen
         name="FilmDetails"
         component={FilmDetails}
-        options={{ title: 'Film Details' }}
+        options={{
+          title: 'Film Details',
+          headerShown: true,
+          headerTitleAlign: 'center',
+          headerStyle: { backgroundColor: '#f4511e' },
+          headerTintColor: '#fff',
+        }}
       />
     </Stack.Navigator>
   )
@@ -35,7 +47,13 @@ function FavoritesStack() {
       <Stack.Screen
         name="Favorites"
         component={Favorites}
-        options={{ headerShown: false }}
+        options={{
+          title: 'Favorites',
+          headerShown: true,
+          headerTitleAlign: 'center',
+          headerStyle: { backgroundColor: '#f4511e' },
+          headerTintColor: '#fff',
+        }}
       />
     </Stack.Navigator>
   )
@@ -47,12 +65,7 @@ const App = () => {
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={({ route }) => ({
-            headerShown: true,
-            headerTitleAlign: 'center',
-            headerStyle: {
-              backgroundColor: '#f4511e',
-            },
-            headerTintColor: '#fff',
+            headerShown: false, // << Disable tab-level headers
             tabBarIcon: ({ focused, color, size }) => {
               let iconName
 
