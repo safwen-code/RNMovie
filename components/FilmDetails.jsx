@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, ScrollView, Image } from 'react-native'
 import Spinner from './Spinner'
 import { getfilmbyid } from '../Helpers/MVapi'
+import { useSelector } from 'react-redux'
+
 import moment from 'moment/moment'
 import numeral from 'numeral'
 
 const FilmDetails = ({ route }) => {
-  //   console.log('id film from filmdetail', route.params)
+  const favorite = useSelector((state) => state.favorite)
+  const { favoritesFilm } = favorite
+  console.log(favoritesFilm)
+
   const { idfilm } = route.params || {}
   const [film, setFilm] = useState()
   const [loading, setLoading] = useState(true)
