@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Provider } from 'react-redux'
-import Ionicons from 'react-native-vector-icons/Ionicons' // Import Ionicons
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import Store from './store'
 import Search from './components/Search'
 import FilmDetails from './components/FilmDetails'
