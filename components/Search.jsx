@@ -5,6 +5,7 @@ import FilmsItems from './FilmsItems.jsx'
 import { getfilmbytext } from '../Helpers/MVapi.js'
 import Spinner from './Spinner.jsx'
 import { useNavigation } from '@react-navigation/native'
+import { useSelector } from 'react-redux'
 
 const Search = () => {
   const [search, setSearch] = useState()
@@ -53,6 +54,10 @@ const Search = () => {
     // console.log('search comp id film', id)
     navigation.navigate('Detailfilm', { idfilm: id })
   }
+
+  const favorite = useSelector((state) => state.favorite)
+  const { favoritesFilm } = favorite
+
   return (
     <View style={styles.main_container}>
       <TextInput
@@ -68,7 +73,15 @@ const Search = () => {
         data={films}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <FilmsItems film={item} getFilmId={getFilmId} />
+          <FilmsItems
+            film={item}
+            getFilmId={getFilmId}
+            isFilmFavorite={
+              favoritesFilm.findIndex((film) => film.id === item.id) !== -1
+                ? true
+                : false
+            }
+          />
         )}
         onEndReachedThreshold={0.5}
         onEndReached={() => {
