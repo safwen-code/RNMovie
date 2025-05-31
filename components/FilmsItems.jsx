@@ -1,7 +1,17 @@
 import React from 'react'
 import { TouchableOpacity, View, Image, Text, StyleSheet } from 'react-native'
 
-const FilmsItems = ({ film, getFilmId }) => {
+const FilmsItems = ({ film, getFilmId, isFilmFavorite }) => {
+  const displayFavImg = () => {
+    if (isFilmFavorite) {
+      return (
+        <Image
+          style={styles.favorite_image}
+          source={require('../Images/favorite.png')}
+        />
+      )
+    }
+  }
   return (
     <TouchableOpacity
       style={styles.main_container}
@@ -15,6 +25,7 @@ const FilmsItems = ({ film, getFilmId }) => {
       />
       <View style={styles.content_container}>
         <View style={styles.header_container}>
+          {displayFavImg()}
           <Text style={styles.title_text}>{film.title}</Text>
           <Text style={styles.vote_text}>{film.vote_average}</Text>
         </View>
@@ -77,5 +88,10 @@ const styles = StyleSheet.create({
   date_text: {
     textAlign: 'right',
     fontSize: 14,
+  },
+  favorite_image: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
   },
 })
