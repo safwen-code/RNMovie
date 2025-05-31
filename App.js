@@ -55,6 +55,17 @@ function FavoritesStack() {
           headerTintColor: '#fff',
         }}
       />
+      <Stack.Screen
+        name="FilmDetails"
+        component={FilmDetails}
+        options={{
+          title: 'Film Details',
+          headerShown: true,
+          headerTitleAlign: 'center',
+          headerStyle: { backgroundColor: '#f4511e' },
+          headerTintColor: '#fff',
+        }}
+      />
     </Stack.Navigator>
   )
 }
@@ -65,7 +76,7 @@ const App = () => {
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={({ route }) => ({
-            headerShown: false, // << Disable tab-level headers
+            headerShown: false, // Disable  headers
             tabBarIcon: ({ focused, color, size }) => {
               let iconName
 
