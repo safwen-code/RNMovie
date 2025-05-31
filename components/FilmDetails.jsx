@@ -1,8 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, Image } from 'react-native'
+import { useEffect, useState } from 'react'
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from 'react-native'
 import Spinner from './Spinner'
 import { getfilmbyid } from '../Helpers/MVapi'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import moment from 'moment/moment'
 import numeral from 'numeral'
@@ -10,7 +17,6 @@ import numeral from 'numeral'
 const FilmDetails = ({ route }) => {
   const favorite = useSelector((state) => state.favorite)
   const { favoritesFilm } = favorite
-  console.log(favoritesFilm)
 
   const { idfilm } = route.params || {}
   const [film, setFilm] = useState()
@@ -24,6 +30,19 @@ const FilmDetails = ({ route }) => {
     })
   }, [getfilmbyid, idfilm])
 
+  const dispatch = useDispatch()
+  const handleToggleFavorite = () => {
+    dispatch({ type: 'TOGGLE_FAVORITE', value: film })
+  }
+
+  const displayFavoriteImage = () => {
+    var sourceImage = require('../Images/favorie.png')
+    if (favoritesFilm.findIndex((item) => item.id === film.id) !== -1) {
+      // Film dans nos favoris
+      sourceImage = require('../Images/favorite.png')
+    }
+    return <Image style={styles.favorite_image} source={sourceImage} />
+  }
   return (
     <View style={styles.main_container}>
       {loading ? (
@@ -37,6 +56,12 @@ const FilmDetails = ({ route }) => {
             }}
           />
           <Text style={styles.title_text}>{film.title}</Text>
+          <TouchableOpacity
+            style={styles.favorite_container}
+            onPress={handleToggleFavorite}
+          >
+            {displayFavoriteImage()}
+          </TouchableOpacity>
           <Text style={styles.description_text}>{film.overview}</Text>
           <Text style={styles.default_text}>
             Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}
@@ -104,6 +129,13 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
     marginTop: 5,
+  },
+  favorite_container: {
+    alignItems: 'center',
+  },
+  favorite_image: {
+    width: 40,
+    height: 40,
   },
 })
 export default FilmDetails
