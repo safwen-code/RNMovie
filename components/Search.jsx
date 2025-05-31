@@ -52,7 +52,7 @@ const Search = () => {
   //get id of film
   const getFilmId = (id) => {
     // console.log('search comp id film', id)
-    navigation.navigate('Detailfilm', { idfilm: id })
+    navigation.navigate('FilmDetails', { idfilm: id })
   }
 
   const favorite = useSelector((state) => state.favorite)
