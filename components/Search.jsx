@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, TextInput, Button, FlatList } from 'react-native'
+import { StyleSheet, View, TextInput, Button, SafeAreaView } from 'react-native'
 
 import { getfilmbytext } from '../Helpers/MVapi.js'
 import Spinner from './Spinner.jsx'
@@ -47,25 +47,27 @@ const Search = () => {
   }
 
   return (
-    <View style={styles.main_container}>
-      <TextInput
-        style={styles.textinput}
-        placeholder="Titre du film"
-        onChangeText={searchHundler}
-        value={search}
-        name="search"
-        onSubmitEditing={submitInput}
-      />
-      <Button title="Search Movie" onPress={sreachCklick} />
-      <FilmList
-        films={films}
-        page={page}
-        totalPages={totalPages}
-        favoriteList={false}
-        loadFilms={loadFilms}
-      />
-      {loading && <Spinner />}
-    </View>
+    <SafeAreaView style={styles.main_container}>
+      <View style={styles.main_container}>
+        <TextInput
+          style={styles.textinput}
+          placeholder="Titre du film"
+          onChangeText={searchHundler}
+          value={search}
+          name="search"
+          onSubmitEditing={submitInput}
+        />
+        <Button title="Search Movie" onPress={sreachCklick} />
+        <FilmList
+          films={films}
+          page={page}
+          totalPages={totalPages}
+          favoriteList={false}
+          loadFilms={loadFilms}
+        />
+        {loading && <Spinner />}
+      </View>
+    </SafeAreaView>
   )
 }
 
