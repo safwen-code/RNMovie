@@ -1,25 +1,7 @@
-import React, { useEffect, useRef } from 'react'
-import {
-  TouchableOpacity,
-  View,
-  Image,
-  Text,
-  StyleSheet,
-  Animated,
-  Dimensions,
-} from 'react-native'
+import { TouchableOpacity, View, Image, Text, StyleSheet } from 'react-native'
+import FadeIn from '../animation/FadeIn'
 
 const FilmsItems = ({ film, getFilmId, isFilmFavorite }) => {
-  const translateX = useRef(new Animated.Value(Dimensions.get('window').width))
-    .current
-
-  useEffect(() => {
-    Animated.spring(translateX, {
-      toValue: 0,
-      useNativeDriver: true, // This will now work
-    }).start()
-  }, [])
-
   const displayFavImg = () => {
     if (isFilmFavorite) {
       return (
@@ -33,11 +15,7 @@ const FilmsItems = ({ film, getFilmId, isFilmFavorite }) => {
   }
 
   return (
-    <Animated.View
-      style={{
-        transform: [{ translateX }], // Using transform instead of left
-      }}
-    >
+    <FadeIn>
       <TouchableOpacity
         style={styles.main_container}
         onPress={() => {
@@ -64,7 +42,7 @@ const FilmsItems = ({ film, getFilmId, isFilmFavorite }) => {
           </View>
         </View>
       </TouchableOpacity>
-    </Animated.View>
+    </FadeIn>
   )
 }
 
