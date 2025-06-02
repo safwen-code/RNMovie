@@ -1,7 +1,25 @@
-import React from 'react'
-import { TouchableOpacity, View, Image, Text, StyleSheet } from 'react-native'
+import React, { useEffect, useRef } from 'react'
+import {
+  TouchableOpacity,
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  Animated,
+  Dimensions,
+} from 'react-native'
 
 const FilmsItems = ({ film, getFilmId, isFilmFavorite }) => {
+  const translateX = useRef(new Animated.Value(Dimensions.get('window').width))
+    .current
+
+  useEffect(() => {
+    Animated.spring(translateX, {
+      toValue: 0,
+      useNativeDriver: true, // This will now work
+    }).start()
+  }, [])
+
   const displayFavImg = () => {
     if (isFilmFavorite) {
       return (
@@ -11,34 +29,42 @@ const FilmsItems = ({ film, getFilmId, isFilmFavorite }) => {
         />
       )
     }
+    return null // Explicit return for all paths
   }
+
   return (
-    <TouchableOpacity
-      style={styles.main_container}
-      onPress={() => {
-        getFilmId(film.id)
+    <Animated.View
+      style={{
+        transform: [{ translateX }], // Using transform instead of left
       }}
     >
-      <Image
-        style={styles.image}
-        source={{ uri: `https://image.tmdb.org/t/p/w500${film.poster_path}` }}
-      />
-      <View style={styles.content_container}>
-        <View style={styles.header_container}>
-          {displayFavImg()}
-          <Text style={styles.title_text}>{film.title}</Text>
-          <Text style={styles.vote_text}>{film.vote_average}</Text>
+      <TouchableOpacity
+        style={styles.main_container}
+        onPress={() => {
+          getFilmId(film.id)
+        }}
+      >
+        <Image
+          style={styles.image}
+          source={{ uri: `https://image.tmdb.org/t/p/w500${film.poster_path}` }}
+        />
+        <View style={styles.content_container}>
+          <View style={styles.header_container}>
+            {displayFavImg()}
+            <Text style={styles.title_text}>{film.title}</Text>
+            <Text style={styles.vote_text}>{film.vote_average}</Text>
+          </View>
+          <View style={styles.description_container}>
+            <Text style={styles.description_text} numberOfLines={6}>
+              {film.overview}
+            </Text>
+          </View>
+          <View style={styles.date_container}>
+            <Text style={styles.date_text}>Sorti le {film.release_date}</Text>
+          </View>
         </View>
-        <View style={styles.description_container}>
-          <Text style={styles.description_text} numberOfLines={6}>
-            {film.overview}
-          </Text>
-        </View>
-        <View style={styles.date_container}>
-          <Text style={styles.date_text}>Sorti le {film.release_date}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </Animated.View>
   )
 }
 
