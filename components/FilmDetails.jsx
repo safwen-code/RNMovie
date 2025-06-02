@@ -15,6 +15,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import moment from 'moment/moment'
 import numeral from 'numeral'
+import EnlargeShrink from '../animation/EnlargeShrink'
 
 const FilmDetails = ({ route }) => {
   const favorite = useSelector((state) => state.favorite)
@@ -37,12 +38,20 @@ const FilmDetails = ({ route }) => {
   }
 
   const displayFavoriteImage = () => {
-    var sourceImage = require('../Images/favorie.png')
-    if (favoritesFilm.findIndex((item) => item.id === film.id) !== -1) {
-      // Film dans nos favoris
-      sourceImage = require('../Images/favorite.png')
-    }
-    return <Image style={styles.favorite_image} source={sourceImage} />
+    const isFavorite =
+      favoritesFilm.findIndex((item) => item.id === film.id) !== -1
+    const sourceImage = isFavorite
+      ? require('../Images/favorite.png')
+      : require('../Images/favorie.png')
+
+    return (
+      <EnlargeShrink shouldEnlarge={isFavorite}>
+        <Image
+          style={[styles.favorite_image, { width: 40, height: 40 }]}
+          source={sourceImage}
+        />
+      </EnlargeShrink>
+    )
   }
 
   const shareFilm = () => {
@@ -65,14 +74,14 @@ const FilmDetails = ({ route }) => {
         </TouchableOpacity>
       )
     }
-    return null // Return null if conditions aren't met
+    return null
   }
 
   return (
     <View style={styles.main_container}>
       {loading ? (
         <Spinner />
-      ) : film ? ( // Added check for film existence
+      ) : film ? (
         <>
           <ScrollView style={styles.scrollview_container}>
             <Image
@@ -165,8 +174,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   favorite_image: {
-    width: 40,
-    height: 40,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
   share_touchable_floatingactionbutton: {
     position: 'absolute',
