@@ -6,6 +6,8 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  Share,
+  Platform, // Don't forget to import Platform
 } from 'react-native'
 import Spinner from './Spinner'
 import { getfilmbyid } from '../Helpers/MVapi'
@@ -24,11 +26,10 @@ const FilmDetails = ({ route }) => {
 
   useEffect(() => {
     getfilmbyid(idfilm).then((data) => {
-      //   console.log(data)
       setFilm(data)
       setLoading(false)
     })
-  }, [getfilmbyid, idfilm])
+  }, [idfilm]) // Removed getfilmbyid from dependencies as it's imported
 
   const dispatch = useDispatch()
   const handleToggleFavorite = () => {
@@ -43,59 +44,89 @@ const FilmDetails = ({ route }) => {
     }
     return <Image style={styles.favorite_image} source={sourceImage} />
   }
+
+  const shareFilm = () => {
+    if (film) {
+      Share.share({ title: film.title, message: film.overview })
+    }
+  }
+
+  const FloatActionButton = () => {
+    if (film != undefined && Platform.OS === 'android') {
+      return (
+        <TouchableOpacity
+          style={styles.share_touchable_floatingactionbutton}
+          onPress={shareFilm} // Removed the () to prevent immediate invocation
+        >
+          <Image
+            style={styles.share_image}
+            source={require('../Images/share.png')}
+          />
+        </TouchableOpacity>
+      )
+    }
+    return null // Return null if conditions aren't met
+  }
+
   return (
     <View style={styles.main_container}>
       {loading ? (
         <Spinner />
+      ) : film ? ( // Added check for film existence
+        <>
+          <ScrollView style={styles.scrollview_container}>
+            <Image
+              style={styles.image}
+              source={{
+                uri: `https://image.tmdb.org/t/p/w500${film.poster_path}`,
+              }}
+            />
+            <Text style={styles.title_text}>{film.title}</Text>
+            <TouchableOpacity
+              style={styles.favorite_container}
+              onPress={handleToggleFavorite}
+            >
+              {displayFavoriteImage()}
+            </TouchableOpacity>
+            <Text style={styles.description_text}>{film.overview}</Text>
+            <Text style={styles.default_text}>
+              Sorti le{' '}
+              {moment(new Date(film.release_date)).format('DD/MM/YYYY')}
+            </Text>
+            <Text style={styles.default_text}>
+              Note : {film.vote_average} / 10
+            </Text>
+            <Text style={styles.default_text}>
+              Nombre de votes : {film.vote_count}
+            </Text>
+            <Text style={styles.default_text}>
+              Budget :{' '}
+              {film.budget ? numeral(film.budget).format('0,0[.]00 $') : 'N/A'}
+            </Text>
+            <Text style={styles.default_text}>
+              Genre(s) :{' '}
+              {film.genres && film.genres.length > 0
+                ? film.genres.map((genre) => genre.name).join(' / ')
+                : 'N/A'}
+            </Text>
+            <Text style={styles.default_text}>
+              Companie(s) :{' '}
+              {film.production_companies && film.production_companies.length > 0
+                ? film.production_companies
+                    .map((company) => company.name)
+                    .join(' / ')
+                : 'N/A'}
+            </Text>
+          </ScrollView>
+          <FloatActionButton />
+        </>
       ) : (
-        <ScrollView style={styles.scrollview_container}>
-          <Image
-            style={styles.image}
-            source={{
-              uri: `https://image.tmdb.org/t/p/w500${film.poster_path}`,
-            }}
-          />
-          <Text style={styles.title_text}>{film.title}</Text>
-          <TouchableOpacity
-            style={styles.favorite_container}
-            onPress={handleToggleFavorite}
-          >
-            {displayFavoriteImage()}
-          </TouchableOpacity>
-          <Text style={styles.description_text}>{film.overview}</Text>
-          <Text style={styles.default_text}>
-            Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}
-          </Text>
-          <Text style={styles.default_text}>
-            Note : {film.vote_average} / 10
-          </Text>
-          <Text style={styles.default_text}>
-            Nombre de votes : {film.vote_count}
-          </Text>
-          <Text style={styles.default_text}>
-            Budget : {numeral(film.budget).format('0,0[.]00 $')}
-          </Text>
-          <Text style={styles.default_text}>
-            Genre(s) :{' '}
-            {film.genres
-              .map(function (genre) {
-                return genre.name
-              })
-              .join(' / ')}
-          </Text>
-          <Text style={styles.default_text}>
-            Companie(s) :{' '}
-            {film.production_companies
-              .map(function (company) {
-                return company.name
-              })
-              .join(' / ')}
-          </Text>
-        </ScrollView>
+        <Text>No film data available</Text>
       )}
     </View>
   )
 }
+
 const styles = StyleSheet.create({
   main_container: {
     flex: 1,
@@ -137,5 +168,21 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
+  share_touchable_floatingactionbutton: {
+    position: 'absolute',
+    width: 60,
+    height: 60,
+    right: 30,
+    bottom: 30,
+    borderRadius: 30,
+    backgroundColor: '#e91e63',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  share_image: {
+    width: 30,
+    height: 30,
+  },
 })
+
 export default FilmDetails
